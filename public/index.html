@@ -344,6 +344,11 @@ function showSection(key, on) {
   const el = document.getElementById(SECTION_IDS[key]); if (el) el.style.display = on ? '' : 'none';
   document.querySelectorAll(`[data-nav="${key}"]`).forEach(n => n.style.display = on ? '' : 'none');
 }
+// Une carte de contact n'est cliquable que si elle a une vraie adresse (plus de renvoi vers la page elle-même)
+function setCardLink(el, url) {
+  if (url) { el.href = url; el.style.cursor = ''; el.removeAttribute('aria-disabled'); }
+  else { el.removeAttribute('href'); el.style.cursor = 'default'; el.setAttribute('aria-disabled', 'true'); }
+}
 function render(c) {
   document.querySelectorAll('[data-k]').forEach(el => el.textContent = get(c, el.dataset.k) ?? '');
   c.replay ??= { title: 'Les *replays*', subtitle: '', videos: [] };
@@ -361,12 +366,20 @@ function render(c) {
     <div class="info">${v.date || v.tag ? `<div class="meta">${v.date ? `<span class="d">${esc(v.date)}</span>` : ''}${v.tag ? `<span>${esc(v.tag)}</span>` : ''}</div>` : ''}<h3>${esc(v.title)}</h3>${v.text ? `<p>${linkify(v.text)}</p>` : ''}</div></article>`).join('');
   document.getElementById('team').innerHTML = vis(c.bureau.members).map((m,i) => `<div class="member reveal"><div class="avatar" style="--c:var(${AVATAR[i % AVATAR.length]})">${esc(initials(m.name))}</div><h3>${esc(m.name)}</h3><p>${esc(m.role)}</p></div>`).join('');
   document.getElementById('benefits').innerHTML = (c.adhesion.benefits||[]).filter(Boolean).map(b => `<li>${esc(b)}</li>`).join('');
-  const join = document.getElementById('join-btn'); join.href = safeUrl(c.adhesion.link) || '#adherer';
+  // Bouton d'adhésion : masqué tant qu'aucun lien n'est renseigné
+  const join = document.getElementById('join-btn'), joinUrl = safeUrl(c.adhesion.link);
+  if (joinUrl) { join.href = joinUrl; join.style.display = ''; } else { join.removeAttribute('href'); join.style.display = 'none'; }
   const links = vis(c.contact.links).filter(l => l.label && safeUrl(l.url));
   document.getElementById('extra-links').innerHTML = links.map(l => `<a class="btn ghost" href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('');
   document.querySelectorAll('.join-box > div > p, .hero p[data-k], .section-head p[data-k]').forEach(el => { if (el.dataset.k) el.innerHTML = linkify(get(c, el.dataset.k)); });
-  const mail = document.getElementById('c-mail'); mail.href = c.contact.email ? 'mailto:' + c.contact.email : '#contact';
-  const insta = document.getElementById('c-insta'); insta.href = safeUrl(c.contact.instagramUrl) || '#contact';
+  const mail = document.getElementById('c-mail'), email = String(c.contact.email || '').trim();
+  setCardLink(mail, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'mailto:' + email : null);
+  // Instagram : lien renseigné, sinon déduit du pseudo (@lacabanepsy → instagram.com/lacabanepsy)
+  const handle = String(c.contact.instagram || '').trim().replace(/^@/, '');
+  const instaUrl = safeUrl(c.contact.instagramUrl)
+    || (/^[\w.]{1,30}$/.test(handle) ? `https://www.instagram.com/${handle}/` : null)
+    || (c.contact.links || []).map(l => safeUrl(l.url)).find(u => u && /instagram\.com/i.test(u)) || null;
+  setCardLink(document.getElementById('c-insta'), instaUrl);
   for (const key of Object.keys(SECTION_IDS)) showSection(key, !c[key]?.hidden && !(key === 'replay' && !vids.length));
   observe();
 }
