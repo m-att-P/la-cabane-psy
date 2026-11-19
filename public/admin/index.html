@@ -78,6 +78,10 @@
   .item.str input{flex:1}
   .item.str .tools{margin:0}
 
+  .yt-status{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:13.5px;font-weight:700}
+  .yt-status:empty{display:none}
+  .yt-status img{width:120px;aspect-ratio:16/9;object-fit:cover;border-radius:8px}
+  .yt-status .ok{color:var(--green)} .yt-status .bad{color:var(--red)}
   .savebar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--teal-dark);color:#fff;transform:translateY(110%);transition:transform .25s}
   .savebar.show{transform:none}
   .savebar .in{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px}
@@ -281,6 +285,8 @@ const SCHEMA = [
     lists: [{ key: 'items', label: 'Actions', add: 'Ajouter une action', fields: [['title', 'Titre'], ['text', 'Description', 'area']], blank: { title: '', text: '' } }] },
   { key: 'agenda', title: 'Agenda', color: '#1F9BD7', fields: [['title', 'Titre de la section'], ['subtitle', 'Sous-titre']],
     lists: [{ key: 'events', label: 'Événements', add: 'Ajouter un événement', fields: [['day', 'Jour (ex. 12)', 'half'], ['month', 'Mois (ex. Déc.)', 'half'], ['title', "Titre de l'événement"], ['tag', 'Étiquette (ex. Pro, Convivialité)'], ['text', 'Description', 'area']], blank: { day: '', month: '', title: '', tag: '', text: '' } }] },
+  { key: 'replay', title: 'Replay (vidéos YouTube)', color: '#B44D5C', fields: [['title', 'Titre de la section'], ['subtitle', 'Sous-titre']],
+    lists: [{ key: 'videos', label: 'Vidéos', add: 'Ajouter une vidéo', fields: [['url', 'Lien YouTube', 'yt', "Colle le lien de la vidéo (bouton Partager) ou son code d'intégration."], ['title', 'Titre'], ['date', 'Date (ex. Mars 2027)', 'half'], ['tag', 'Étiquette (ex. Conférence)', 'half'], ['text', 'Description', 'area']], blank: { url: '', title: '', date: '', tag: '', text: '' } }] },
   { key: 'bureau', title: 'Le bureau', color: '#7B6CC4', fields: [['title', 'Titre de la section']],
     lists: [{ key: 'members', label: 'Membres', add: 'Ajouter un membre', fields: [['name', 'Prénom Nom', 'half'], ['role', 'Rôle', 'half']], blank: { name: '', role: '' } }] },
   { key: 'adhesion', title: 'Adhésion', color: '#E8414F', fields: [['title', 'Titre'], ['text', 'Texte', 'area'], ['price', 'Montant (ex. 10)', 'half'], ['priceUnit', 'Unité (ex. € / an)', 'half'], ['priceLabel', 'Texte sous le prix', 'half'], ['buttonText', 'Texte du bouton', 'half'], ['link', 'Lien du bouton (HelloAsso…)', 'url']],
@@ -303,8 +309,15 @@ function field(path, [k, label, type, hint], value) {
   const id = 'f-' + path.replace(/\./g, '-');
   const input = type === 'area'
     ? `<textarea id="${id}" data-path="${path}">${esc(value)}</textarea>`
-    : `<input type="${type === 'url' ? 'url' : 'text'}" id="${id}" data-path="${path}" value="${esc(value)}"${type === 'url' ? ' placeholder="https://…"' : ''}>`;
-  return `<div class="${type === 'half' ? '' : 'span2'}"><label for="${id}">${esc(label)}${hint ? ` <span class="hint">${esc(hint)}</span>` : ''}</label>${input}</div>`;
+    : `<input type="${type === 'url' ? 'url' : 'text'}" id="${id}" data-path="${path}" value="${esc(value)}"${type === 'url' ? ' placeholder="https://…"' : type === 'yt' ? ' placeholder="https://www.youtube.com/watch?v=…"' : ''}>`;
+  const yt = type === 'yt' ? `<div class="yt-status" id="yt-${id}">${ytStatus(value)}</div>` : '';
+  return `<div class="${type === 'half' ? '' : 'span2'}"><label for="${id}">${esc(label)}${hint ? ` <span class="hint">${esc(hint)}</span>` : ''}</label>${input}${yt}</div>`;
+}
+const ytId = u => { const m = String(u||'').match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/) || String(u||'').trim().match(/^([\w-]{11})$/); return m ? m[1] : null; };
+function ytStatus(v) {
+  if (!v) return '';
+  const id = ytId(v);
+  return id ? `<img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt=""><span class="ok">✓ Vidéo reconnue</span>` : `<span class="bad">⚠️ Lien YouTube non reconnu — la vidéo ne s'affichera pas.</span>`;
 }
 function fieldsBlock(base, fields, obj) {
   return `<div class="grid2">${fields.map(f => field(`${base}.${f[0]}`, f, obj?.[f[0]])).join('')}</div>`;
@@ -333,7 +346,8 @@ function renderEditor() {
 const getPath = p => p.split('.').reduce((o, k) => o[k], content);
 function setPath(p, v) { const ks = p.split('.'); const last = ks.pop(); ks.reduce((o, k) => o[k], content)[last] = v; }
 
-$('#editor').addEventListener('input', e => { const p = e.target.dataset.path; if (!p) return; setPath(p, e.target.value); setDirty(JSON.stringify(content) !== saved); });
+$('#editor').addEventListener('input', e => { const p = e.target.dataset.path; if (!p) return; setPath(p, e.target.value);
+  const st = document.getElementById('yt-' + e.target.id); if (st) st.innerHTML = ytStatus(e.target.value); setDirty(JSON.stringify(content) !== saved); });
 $('#editor').addEventListener('toggle', e => { const s = e.target.dataset?.sec; if (s) e.target.open ? openPanels.add(s) : openPanels.delete(s); }, true);
 $('#editor').addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
