@@ -82,6 +82,19 @@
   .yt-status:empty{display:none}
   .yt-status img{width:120px;aspect-ratio:16/9;object-fit:cover;border-radius:8px}
   .yt-status .ok{color:var(--green)} .yt-status .bad{color:var(--red)}
+  .switch{display:flex;align-items:center;gap:12px;margin:16px 0 4px;font-weight:700;color:var(--teal-dark);cursor:pointer;width:fit-content}
+  .switch input{position:absolute;opacity:0;pointer-events:none}
+  .switch .track{width:44px;height:24px;border-radius:999px;background:#cfd8d9;position:relative;transition:background .2s;flex:0 0 auto}
+  .switch .track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .switch input:checked + .track{background:var(--green)}
+  .switch input:checked + .track::after{transform:translateX(20px)}
+  .switch input:focus-visible + .track{outline:3px solid rgba(61,127,139,.35)}
+  .hid-badge{display:inline-block;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:#ECE7DF;color:var(--muted);margin-left:6px}
+  .item .hid-badge{margin:10px 0 0}
+  .panel.is-hidden > summary{color:var(--muted)}
+  .item.is-hidden{opacity:.55;background:#F4F1EC}
+  .item.is-hidden:hover{opacity:.85}
+  .icon-btn.eye.off{background:#ECE7DF}
   .savebar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--teal-dark);color:#fff;transform:translateY(110%);transition:transform .25s}
   .savebar.show{transform:none}
   .savebar .in{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px}
@@ -163,7 +176,7 @@
         <div><h2>Contenu du site</h2><p class="meta" id="last-update"></p></div>
         <button class="btn" id="save-top" disabled>Enregistrer</button>
       </div>
-      <p class="meta" style="margin:-8px 0 18px">💡 Dans les titres, mets un mot <b>*entre étoiles*</b> pour l'afficher en couleur.</p>
+      <p class="meta" style="margin:-8px 0 18px">💡 Dans les titres, mets un mot <b>*entre étoiles*</b> pour l'afficher en couleur.<br>🔗 Dans les textes, écris <b>[texte du lien](https://…)</b> pour faire un lien cliquable, ou colle simplement une adresse https://…</p>
       <div id="editor"></div>
     </section>
 
@@ -284,14 +297,15 @@ const SCHEMA = [
   { key: 'actions', title: 'Nos actions', color: '#F49B2F', fields: [['title', 'Titre de la section'], ['subtitle', 'Sous-titre']],
     lists: [{ key: 'items', label: 'Actions', add: 'Ajouter une action', fields: [['title', 'Titre'], ['text', 'Description', 'area']], blank: { title: '', text: '' } }] },
   { key: 'agenda', title: 'Agenda', color: '#1F9BD7', fields: [['title', 'Titre de la section'], ['subtitle', 'Sous-titre']],
-    lists: [{ key: 'events', label: 'Événements', add: 'Ajouter un événement', fields: [['day', 'Jour (ex. 12)', 'half'], ['month', 'Mois (ex. Déc.)', 'half'], ['title', "Titre de l'événement"], ['tag', 'Étiquette (ex. Pro, Convivialité)'], ['text', 'Description', 'area']], blank: { day: '', month: '', title: '', tag: '', text: '' } }] },
+    lists: [{ key: 'events', label: 'Événements', add: 'Ajouter un événement', fields: [['day', 'Jour (ex. 12)', 'half'], ['month', 'Mois (ex. Déc.)', 'half'], ['title', "Titre de l'événement"], ['tag', 'Étiquette (ex. Pro, Convivialité)'], ['text', 'Description', 'area'], ['link', "Lien d'inscription (HelloAsso, Google Forms…)", 'url', 'Laisse vide s\'il n\'y a pas d\'inscription.'], ['linkText', 'Texte du bouton', 'half']], blank: { day: '', month: '', title: '', tag: '', text: '', link: '', linkText: "S'inscrire" } }] },
   { key: 'replay', title: 'Replay (vidéos YouTube)', color: '#B44D5C', fields: [['title', 'Titre de la section'], ['subtitle', 'Sous-titre']],
     lists: [{ key: 'videos', label: 'Vidéos', add: 'Ajouter une vidéo', fields: [['url', 'Lien YouTube', 'yt', "Colle le lien de la vidéo (bouton Partager) ou son code d'intégration."], ['title', 'Titre'], ['date', 'Date (ex. Mars 2027)', 'half'], ['tag', 'Étiquette (ex. Conférence)', 'half'], ['text', 'Description', 'area']], blank: { url: '', title: '', date: '', tag: '', text: '' } }] },
   { key: 'bureau', title: 'Le bureau', color: '#7B6CC4', fields: [['title', 'Titre de la section']],
     lists: [{ key: 'members', label: 'Membres', add: 'Ajouter un membre', fields: [['name', 'Prénom Nom', 'half'], ['role', 'Rôle', 'half']], blank: { name: '', role: '' } }] },
   { key: 'adhesion', title: 'Adhésion', color: '#E8414F', fields: [['title', 'Titre'], ['text', 'Texte', 'area'], ['price', 'Montant (ex. 10)', 'half'], ['priceUnit', 'Unité (ex. € / an)', 'half'], ['priceLabel', 'Texte sous le prix', 'half'], ['buttonText', 'Texte du bouton', 'half'], ['link', 'Lien du bouton (HelloAsso…)', 'url']],
     lists: [{ key: 'benefits', label: 'Avantages', add: 'Ajouter un avantage', strings: true, blank: '' }] },
-  { key: 'contact', title: 'Contact', color: '#F2B705', fields: [['title', 'Titre de la section'], ['email', 'Adresse e-mail', 'half'], ['instagram', 'Pseudo Instagram (ex. @lacabanepsy)', 'half'], ['instagramUrl', 'Lien Instagram', 'url'], ['location', 'Où nous trouver', 'area']] },
+  { key: 'contact', title: 'Contact', color: '#F2B705', fields: [['title', 'Titre de la section'], ['email', 'Adresse e-mail', 'half'], ['instagram', 'Pseudo Instagram (ex. @lacabanepsy)', 'half'], ['instagramUrl', 'Lien Instagram', 'url'], ['location', 'Où nous trouver', 'area']],
+    lists: [{ key: 'links', label: 'Autres liens (boutons sous le contact)', add: 'Ajouter un lien', fields: [['label', 'Texte du bouton (ex. LinkedIn, Linktree, Discord)', 'half'], ['url', 'Lien', 'half']], blank: { label: '', url: '' } }] },
 ];
 
 let content = null, saved = null, dirty = false;
@@ -328,18 +342,20 @@ function renderEditor() {
     const lists = (sec.lists || []).map(l => {
       const arr = data[l.key] ||= [];
       const tools = (i) => `<div class="tools">
+        ${l.strings ? '' : `<button type="button" class="icon-btn eye ${arr[i].hidden ? 'off' : ''}" title="${arr[i].hidden ? 'Masqué — cliquer pour afficher' : 'Visible — cliquer pour masquer'}" data-act="hide" data-list="${sec.key}.${l.key}" data-i="${i}">${arr[i].hidden ? '🙈' : '👁'}</button>`}
         <button type="button" class="icon-btn" title="Monter" data-act="up" data-list="${sec.key}.${l.key}" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
         <button type="button" class="icon-btn" title="Descendre" data-act="down" data-list="${sec.key}.${l.key}" data-i="${i}" ${i === arr.length - 1 ? 'disabled' : ''}>↓</button>
         <button type="button" class="icon-btn danger" title="Supprimer" data-act="del" data-list="${sec.key}.${l.key}" data-i="${i}">✕</button></div>`;
       const items = arr.map((it, i) => l.strings
         ? `<div class="item str"><input type="text" data-path="${sec.key}.${l.key}.${i}" value="${esc(it)}">${tools(i)}</div>`
-        : `<div class="item">${fieldsBlock(`${sec.key}.${l.key}.${i}`, l.fields, it)}${tools(i)}</div>`).join('');
+        : `<div class="item ${it.hidden ? 'is-hidden' : ''}">${it.hidden ? '<span class="hid-badge">Masqué sur le site</span>' : ''}${fieldsBlock(`${sec.key}.${l.key}.${i}`, l.fields, it)}${tools(i)}</div>`).join('');
       return `<div class="list"><h4>${esc(l.label)} (${arr.length})</h4>${items}
         <button type="button" class="btn ghost small" data-act="add" data-list="${sec.key}.${l.key}">＋ ${esc(l.add)}</button></div>`;
     }).join('');
-    return `<details class="panel" data-sec="${sec.key}" ${openPanels.has(sec.key) ? 'open' : ''} style="--c:${sec.color}">
-      <summary><span class="dot"></span>${esc(sec.title)}<span class="chev">›</span></summary>
-      <div class="body">${fieldsBlock(sec.key, sec.fields, data)}${lists}</div></details>`;
+    const toggle = sec.key === 'hero' ? '' : `<label class="switch"><input type="checkbox" data-sec-toggle="${sec.key}" ${data.hidden ? '' : 'checked'}><span class="track"></span><span>Afficher cette section sur le site</span></label>`;
+    return `<details class="panel ${data.hidden ? 'is-hidden' : ''}" data-sec="${sec.key}" ${openPanels.has(sec.key) ? 'open' : ''} style="--c:${sec.color}">
+      <summary><span class="dot"></span>${esc(sec.title)}${data.hidden ? '<span class="hid-badge">Masquée</span>' : ''}<span class="chev">›</span></summary>
+      <div class="body">${toggle}${fieldsBlock(sec.key, sec.fields, data)}${lists}</div></details>`;
   }).join('');
   document.querySelectorAll('.grid2 > .span2').forEach(el => el.style.gridColumn = '1 / -1');
 }
@@ -348,12 +364,18 @@ function setPath(p, v) { const ks = p.split('.'); const last = ks.pop(); ks.redu
 
 $('#editor').addEventListener('input', e => { const p = e.target.dataset.path; if (!p) return; setPath(p, e.target.value);
   const st = document.getElementById('yt-' + e.target.id); if (st) st.innerHTML = ytStatus(e.target.value); setDirty(JSON.stringify(content) !== saved); });
+$('#editor').addEventListener('change', e => {
+  const k = e.target.dataset.secToggle; if (!k) return;
+  if (e.target.checked) delete content[k].hidden; else content[k].hidden = true;
+  const y = window.scrollY; renderEditor(); window.scrollTo(0, y); setDirty(JSON.stringify(content) !== saved);
+});
 $('#editor').addEventListener('toggle', e => { const s = e.target.dataset?.sec; if (s) e.target.open ? openPanels.add(s) : openPanels.delete(s); }, true);
 $('#editor').addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const arr = getPath(b.dataset.list), i = +b.dataset.i, [sk, lk] = b.dataset.list.split('.');
   const def = SCHEMA.find(s => s.key === sk).lists.find(l => l.key === lk);
   if (b.dataset.act === 'add') arr.push(structuredClone(def.blank));
+  if (b.dataset.act === 'hide') { if (arr[i].hidden) delete arr[i].hidden; else arr[i].hidden = true; }
   if (b.dataset.act === 'del') { if (!confirm('Supprimer cet élément ?')) return; arr.splice(i, 1); }
   if (b.dataset.act === 'up' && i > 0) [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
   if (b.dataset.act === 'down' && i < arr.length - 1) [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];

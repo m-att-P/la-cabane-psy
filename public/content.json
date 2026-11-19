@@ -53,21 +53,27 @@
         "month": "Déc.",
         "title": "Soirée de fin de semestre",
         "tag": "Convivialité",
-        "text": "Lieu et horaire à venir."
+        "text": "Lieu et horaire à venir.",
+        "link": "",
+        "linkText": "S'inscrire"
       },
       {
         "day": "--",
         "month": "Janv.",
         "title": "Rencontre avec un·e psychologue de terrain",
         "tag": "Pro",
-        "text": "Échange autour du métier. Date à venir."
+        "text": "Échange autour du métier. Date à venir.",
+        "link": "",
+        "linkText": "S'inscrire"
       },
       {
         "day": "--",
         "month": "Fév.",
         "title": "Atelier « Trouver son stage »",
         "tag": "Entraide",
-        "text": "Partage de contacts et de conseils entre M1 et M2."
+        "text": "Partage de contacts et de conseils entre M1 et M2.",
+        "link": "",
+        "linkText": "S'inscrire"
       }
     ]
   },
@@ -124,6 +130,7 @@
     "email": "contact@lacabanepsy.fr",
     "instagram": "@lacabanepsy",
     "instagramUrl": "",
-    "location": "UFR de Psychologie\nNantes Université"
+    "location": "UFR de Psychologie\nNantes Université",
+    "links": []
   }
 }
