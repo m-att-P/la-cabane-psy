@@ -1,0 +1,63 @@
+{
+  "hero": {
+    "badge": "Master PEAPEA · Nantes Université",
+    "title": "La clinique de l'*enfant* et de l'*adolescent*",
+    "text": "La Cabane Psy, c'est l'association des étudiant·es du master Psychologie de l'Enfant et de l'Adolescent : Prévention, Évaluation et Accompagnement. Un lieu pour se retrouver, s'entraider et construire notre futur métier."
+  },
+  "about": {
+    "title": "Une cabane dans l'arbre de la psychologie",
+    "text": "Comme une cabane perchée dans un arbre, l'association veut être un espace sûr où chacun·e peut souffler, partager et trouver du soutien tout au long des deux années de master.\n\nLes pièces de puzzle de notre logo représentent la diversité de nos parcours et de nos centres d'intérêt : protection de l'enfance, neurodéveloppement, évaluation, prévention… Ensemble, elles forment un tout.",
+    "pillars": [
+      { "title": "Créer du lien", "text": "Entre M1 et M2, entre promos, et avec les ancien·nes du master." },
+      { "title": "S'entraider", "text": "Partager les ressources, les bons plans de stage et les conseils." },
+      { "title": "S'ouvrir au terrain", "text": "Rencontrer des professionnel·les de l'enfance et de l'adolescence." }
+    ]
+  },
+  "actions": {
+    "title": "Nos *actions*",
+    "subtitle": "Des projets portés par et pour les étudiant·es du master.",
+    "items": [
+      { "title": "Moments conviviaux", "text": "Soirées, pique-niques, afterworks… pour décompresser entre deux partiels." },
+      { "title": "Entraide & ressources", "text": "Parrainage M1/M2, partage de fiches, d'outils d'évaluation et de lieux de stage." },
+      { "title": "Rencontres pros", "text": "Conférences et témoignages de psychologues de terrain : ASE, IME, CMP, libéral…" },
+      { "title": "Prévention & solidarité", "text": "Actions de sensibilisation et projets solidaires autour de l'enfance." }
+    ]
+  },
+  "agenda": {
+    "title": "Nos prochains *rendez-vous*",
+    "subtitle": "Suivez-nous sur Instagram pour ne rien manquer.",
+    "events": [
+      { "day": "--", "month": "Déc.", "title": "Soirée de fin de semestre", "tag": "Convivialité", "text": "Lieu et horaire à venir." },
+      { "day": "--", "month": "Janv.", "title": "Rencontre avec un·e psychologue de terrain", "tag": "Pro", "text": "Échange autour du métier. Date à venir." },
+      { "day": "--", "month": "Fév.", "title": "Atelier « Trouver son stage »", "tag": "Entraide", "text": "Partage de contacts et de conseils entre M1 et M2." }
+    ]
+  },
+  "bureau": {
+    "title": "L'équipe qui fait *vivre la cabane*",
+    "members": [
+      { "name": "Thibault Chaperon", "role": "Président" },
+      { "name": "Emma Lamant", "role": "Vice-présidente" },
+      { "name": "Mattéo Boutantin", "role": "Trésorier" },
+      { "name": "Alicia Lainé", "role": "Vice-trésorière" },
+      { "name": "Marie Le Roux", "role": "Secrétaire" },
+      { "name": "Julie Peyrouton", "role": "Vice-secrétaire" }
+    ]
+  },
+  "adhesion": {
+    "title": "Rejoins la cabane !",
+    "text": "L'adhésion est ouverte à tous les étudiant·es du master PEAPEA, en M1 comme en M2.",
+    "benefits": ["Accès à tous les événements", "Tarifs réduits sur les sorties", "Le réseau des promos et des ancien·nes"],
+    "price": "--",
+    "priceUnit": "€ / an",
+    "priceLabel": "Cotisation annuelle",
+    "buttonText": "Adhérer en ligne",
+    "link": ""
+  },
+  "contact": {
+    "title": "Une question ? *Écris-nous*",
+    "email": "contact@lacabanepsy.fr",
+    "instagram": "@lacabanepsy",
+    "instagramUrl": "",
+    "location": "UFR de Psychologie\nNantes Université"
+  }
+}

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Espace admin – La Cabane Psy</title>
+<link rel="icon" href="/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#3D7F8B;--teal-dark:#2C5F68;--teal-light:#9BD3D5;--teal-pale:#E3F2F2;--terra:#CC825E;--terra-dark:#B06A48;--cream:#FBF7F1;--ink:#23393D;--muted:#5d7276;--line:#E4DED4;--red:#C9424F;--green:#2F8A5B}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',system-ui,sans-serif;background:var(--cream);color:var(--ink);font-size:16px;line-height:1.5;min-height:100vh}
+  h1,h2,h3,.brand{font-family:'Montserrat',sans-serif}
+  button,input,textarea{font-family:inherit;font-size:15px;color:inherit}
+  .hidden{display:none!important}
+
+  /* Auth */
+  .auth{min-height:100vh;display:grid;place-items:center;padding:24px;position:relative;overflow:hidden}
+  .auth-card{background:#fff;border-radius:28px;padding:40px 36px;width:100%;max-width:420px;box-shadow:0 30px 60px -30px rgba(44,95,104,.4);position:relative;z-index:1}
+  .auth-card img{width:110px;margin:0 auto 10px;display:block}
+  .auth-card h1{text-align:center;color:var(--teal-dark);font-size:24px;margin-bottom:4px}
+  .auth-card .sub{text-align:center;color:var(--muted);margin-bottom:26px;font-size:15px}
+  .leaf{position:absolute;width:var(--s);height:calc(var(--s)*1.4);border-radius:0 100% 0 100%;background:var(--c);transform:rotate(var(--r));opacity:.45}
+
+  label{display:block;font-weight:700;font-size:14px;color:var(--teal-dark);margin:14px 0 6px}
+  .hint{font-weight:600;color:var(--muted);font-size:12.5px}
+  input[type=text],input[type=password],input[type=url],input[type=email],textarea{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;transition:border .15s,box-shadow .15s}
+  input:focus,textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(61,127,139,.15)}
+  textarea{min-height:90px;resize:vertical}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--terra);color:#fff;padding:11px 20px;border-radius:999px;font-weight:700;border:none;cursor:pointer;transition:background .15s,transform .1s;text-decoration:none;font-size:15px}
+  .btn:hover{background:var(--terra-dark)}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.full{width:100%;margin-top:22px;padding:13px}
+  .btn.teal{background:var(--teal)} .btn.teal:hover{background:var(--teal-dark)}
+  .btn.ghost{background:transparent;color:var(--teal-dark);border:1.5px solid var(--line)} .btn.ghost:hover{background:var(--teal-pale);border-color:var(--teal-light)}
+  .btn.small{padding:7px 14px;font-size:13.5px}
+  .icon-btn{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center;color:var(--muted);font-size:15px}
+  .icon-btn:hover{background:var(--teal-pale);color:var(--teal-dark)}
+  .icon-btn.danger:hover{background:#fdecee;color:var(--red);border-color:#f3c2c7}
+  .msg{margin-top:14px;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:600}
+  .msg.err{background:#fdecee;color:var(--red)} .msg.ok{background:#e6f4ec;color:var(--green)}
+
+  /* App */
+  .topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line)}
+  .topbar .in{max-width:1100px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.04em;font-size:16px;text-decoration:none}
+  .brand img{width:38px}
+  .brand .t{color:var(--teal)} .brand .a{color:var(--terra)}
+  .brand small{font-family:'Montserrat';font-weight:700;letter-spacing:.02em;color:var(--muted);font-size:13px;margin-left:4px;background:var(--teal-pale);padding:2px 10px;border-radius:999px}
+  .spacer{flex:1}
+  .who{font-size:14px;color:var(--muted);font-weight:600}
+  .who b{color:var(--teal-dark)}
+  .tabs{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;gap:6px}
+  .tab{padding:12px 16px;font-weight:700;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-size:15px}
+  .tab.active{color:var(--teal-dark);border-color:var(--terra)}
+  main{max-width:1100px;margin:0 auto;padding:28px 20px 120px}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+  .page-head h2{color:var(--teal-dark);font-size:26px}
+  .page-head p{color:var(--muted)}
+
+  .panel{background:#fff;border-radius:20px;margin-bottom:16px;border:1px solid var(--line);overflow:hidden}
+  .panel > summary{list-style:none;cursor:pointer;padding:18px 22px;display:flex;align-items:center;gap:12px;font-family:'Montserrat';font-weight:700;color:var(--teal-dark);font-size:17px}
+  .panel > summary::-webkit-details-marker{display:none}
+  .panel > summary .dot{width:12px;height:16px;border-radius:0 100% 0 100%;background:var(--c,var(--teal-light))}
+  .panel > summary .chev{margin-left:auto;transition:transform .2s;color:var(--muted)}
+  .panel[open] > summary .chev{transform:rotate(90deg)}
+  .panel .body{padding:0 22px 22px;border-top:1px solid var(--line)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  .list{margin-top:18px}
+  .list h4{font-family:'Montserrat';font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--terra);margin-bottom:10px}
+  .item{border:1.5px dashed var(--line);border-radius:16px;padding:6px 16px 16px;margin-bottom:12px;position:relative;background:#FFFDFA}
+  .item .tools{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}
+  .item.str{display:flex;gap:8px;align-items:center;padding:8px}
+  .item.str input{flex:1}
+  .item.str .tools{margin:0}
+
+  .savebar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--teal-dark);color:#fff;transform:translateY(110%);transition:transform .25s}
+  .savebar.show{transform:none}
+  .savebar .in{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px}
+  .savebar .btn.ghost{color:#fff;border-color:rgba(255,255,255,.35)} .savebar .btn.ghost:hover{background:rgba(255,255,255,.1)}
+
+  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);opacity:0;background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;z-index:50;transition:all .25s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%)}
+
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:15px}
+  th{font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--teal-pale);color:var(--teal-dark)}
+  .card{background:#fff;border-radius:20px;border:1px solid var(--line);padding:24px;margin-bottom:18px}
+  .card h3{color:var(--teal-dark);font-size:18px;margin-bottom:4px}
+  .pw-row{display:flex;gap:8px}
+  .pw-row input{flex:1}
+  .meta{font-size:13.5px;color:var(--muted)}
+
+  @media (max-width:700px){.topbar .in{gap:8px;padding:0 14px}.brand > span{display:none}a.btn.ghost.small{display:none}.tabs{padding:0 8px;gap:0}.tab{padding:12px 10px;font-size:14px;white-space:nowrap}.grid2{grid-template-columns:1fr}.who{display:none}.brand small{display:none}th:nth-child(3),td:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+
+<!-- ============ CONNEXION / CONFIGURATION ============ -->
+<section class="auth hidden" id="auth">
+  <span class="leaf" style="--s:160px;--c:var(--teal-light);top:-40px;left:-40px;--r:-20deg"></span>
+  <span class="leaf" style="--s:110px;--c:var(--terra);bottom:-30px;right:-20px;--r:150deg;opacity:.25"></span>
+  <span class="leaf" style="--s:60px;--c:var(--teal);top:20%;right:12%;--r:40deg;opacity:.2"></span>
+  <div class="auth-card">
+    <img src="/logo.png" alt="La Cabane Psy">
+    <!-- Connexion -->
+    <form id="login-form">
+      <h1>Espace admin</h1>
+      <p class="sub">Connecte-toi pour modifier le site.</p>
+      <label for="l-user">Nom d'utilisateur</label>
+      <input type="text" id="l-user" autocomplete="username" autocapitalize="none" required>
+      <label for="l-pass">Mot de passe</label>
+      <input type="password" id="l-pass" autocomplete="current-password" required>
+      <button class="btn full" type="submit">Se connecter</button>
+      <div class="msg err hidden" id="l-msg"></div>
+    </form>
+    <!-- Premier admin -->
+    <form id="setup-form" class="hidden">
+      <h1>Bienvenue !</h1>
+      <p class="sub">Crée le premier compte administrateur.</p>
+      <label for="s-code">Code de configuration <span class="hint">(le SETUP_CODE défini sur Netlify)</span></label>
+      <input type="password" id="s-code" required>
+      <label for="s-user">Nom d'utilisateur <span class="hint">(minuscules, ex. matteo)</span></label>
+      <input type="text" id="s-user" autocomplete="username" autocapitalize="none" required>
+      <label for="s-pass">Mot de passe <span class="hint">(8 caractères min.)</span></label>
+      <input type="password" id="s-pass" autocomplete="new-password" required>
+      <button class="btn full" type="submit">Créer mon compte</button>
+      <div class="msg err hidden" id="s-msg"></div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ APPLICATION ============ -->
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div class="in">
+      <a class="brand" href="/" target="_blank"><img src="/icon.png" alt=""><span><span class="a">LA</span><span class="t">CABANE</span><span class="a">PSY</span></span><small>Admin</small></a>
+      <div class="spacer"></div>
+      <span class="who">Connecté·e : <b id="me"></b></span>
+      <a class="btn ghost small" href="/" target="_blank">Voir le site ↗</a>
+      <button class="btn ghost small" id="logout">Déconnexion</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="content">Contenu du site</button>
+      <button class="tab" data-tab="users">Administrateurs</button>
+      <button class="tab" data-tab="account">Mon compte</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- Contenu -->
+    <section data-view="content">
+      <div class="page-head">
+        <div><h2>Contenu du site</h2><p class="meta" id="last-update"></p></div>
+        <button class="btn" id="save-top" disabled>Enregistrer</button>
+      </div>
+      <p class="meta" style="margin:-8px 0 18px">💡 Dans les titres, mets un mot <b>*entre étoiles*</b> pour l'afficher en couleur.</p>
+      <div id="editor"></div>
+    </section>
+
+    <!-- Admins -->
+    <section data-view="users" class="hidden">
+      <div class="page-head"><div><h2>Administrateurs</h2><p>Les personnes qui peuvent modifier le site.</p></div></div>
+      <div class="card">
+        <h3>Ajouter un administrateur</h3>
+        <p class="meta">Crée ses identifiants, puis transmets-les-lui. Il ou elle pourra changer son mot de passe dans « Mon compte ».</p>
+        <form id="add-user">
+          <div class="grid2">
+            <div><label for="u-name">Nom d'utilisateur</label><input type="text" id="u-name" autocapitalize="none" autocomplete="off" placeholder="ex. thibault" required></div>
+            <div><label for="u-pass">Mot de passe</label>
+              <div class="pw-row"><input type="text" id="u-pass" autocomplete="off" required><button type="button" class="btn ghost small" id="gen">Générer</button></div>
+            </div>
+          </div>
+          <button class="btn teal" type="submit" style="margin-top:18px">Créer l'administrateur</button>
+          <div class="msg hidden" id="u-msg"></div>
+        </form>
+      </div>
+      <div class="card" style="padding:8px 10px">
+        <table><thead><tr><th>Nom d'utilisateur</th><th>Créé le</th><th>Par</th><th></th></tr></thead><tbody id="users"></tbody></table>
+      </div>
+    </section>
+
+    <!-- Mon compte -->
+    <section data-view="account" class="hidden">
+      <div class="page-head"><div><h2>Mon compte</h2></div></div>
+      <div class="card" style="max-width:520px">
+        <h3>Changer mon mot de passe</h3>
+        <form id="pw-form">
+          <label for="p-cur">Mot de passe actuel</label><input type="password" id="p-cur" autocomplete="current-password" required>
+          <label for="p-new">Nouveau mot de passe <span class="hint">(8 caractères min.)</span></label><input type="password" id="p-new" autocomplete="new-password" required>
+          <label for="p-new2">Confirmer</label><input type="password" id="p-new2" autocomplete="new-password" required>
+          <button class="btn teal" type="submit" style="margin-top:18px">Mettre à jour</button>
+          <div class="msg hidden" id="p-msg"></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div class="savebar" id="savebar"><div class="in">
+    <span>✏️ Modifications non enregistrées</span><div class="spacer"></div>
+    <button class="btn ghost small" id="discard">Annuler</button>
+    <button class="btn" id="save">Enregistrer et publier</button>
+  </div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------------- utilitaires ----------------
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let token = null;
+try { token = sessionStorage.getItem('cabane-token'); } catch {}
+const setToken = t => { token = t; try { t ? sessionStorage.setItem('cabane-token', t) : sessionStorage.removeItem('cabane-token'); } catch {} };
+
+async function api(path, { method = 'GET', body } = {}) {
+  const r = await fetch('/api/' + path, {
+    method, headers: { 'content-type': 'application/json', ...(token ? { authorization: 'Bearer ' + token } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  let data = {}; try { data = await r.json(); } catch {}
+  if (r.status === 401 && token && path !== 'login') { setToken(null); showAuth('login'); throw new Error(data.error || 'Session expirée.'); }
+  if (!r.ok) throw new Error(data.error || 'Erreur ' + r.status);
+  return data;
+}
+function msg(el, text, ok) { el.textContent = text; el.className = 'msg ' + (ok ? 'ok' : 'err'); }
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2600); }
+const fmtDate = iso => iso ? new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+const fmtDateTime = iso => new Date(iso).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+
+// ---------------- authentification ----------------
+function showAuth(mode) {
+  $('#app').classList.add('hidden'); $('#auth').classList.remove('hidden');
+  $('#login-form').classList.toggle('hidden', mode !== 'login');
+  $('#setup-form').classList.toggle('hidden', mode !== 'setup');
+}
+async function start() {
+  if (token) { try { const { user } = await api('me'); return enterApp(user); } catch {} }
+  try { const { needed } = await api('setup'); showAuth(needed ? 'setup' : 'login'); }
+  catch { showAuth('login'); msg($('#l-msg'), "Impossible de joindre le serveur. Le site est-il bien déployé sur Netlify ?"); $('#l-msg').classList.remove('hidden'); }
+}
+$('#login-form').addEventListener('submit', async e => {
+  e.preventDefault(); const b = e.submitter; b.disabled = true; $('#l-msg').classList.add('hidden');
+  try { const r = await api('login', { method: 'POST', body: { username: $('#l-user').value, password: $('#l-pass').value } }); setToken(r.token); $('#l-pass').value = ''; enterApp(r.user); }
+  catch (err) { msg($('#l-msg'), err.message); }
+  b.disabled = false;
+});
+$('#setup-form').addEventListener('submit', async e => {
+  e.preventDefault(); const b = e.submitter; b.disabled = true;
+  try { const r = await api('setup', { method: 'POST', body: { setupCode: $('#s-code').value, username: $('#s-user').value.trim().toLowerCase(), password: $('#s-pass').value } }); setToken(r.token); enterApp(r.user); }
+  catch (err) { msg($('#s-msg'), err.message); }
+  b.disabled = false;
+});
+$('#logout').addEventListener('click', () => { if (dirty && !confirm('Des modifications ne sont pas enregistrées. Se déconnecter quand même ?')) return; dirty = false; setToken(null); showAuth('login'); });
+
+let me = null;
+async function enterApp(user) {
+  me = user; $('#me').textContent = user.username;
+  $('#auth').classList.add('hidden'); $('#app').classList.remove('hidden');
+  await loadContent();
+}
+
+// ---------------- onglets ----------------
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+  document.querySelectorAll('[data-view]').forEach(v => v.classList.toggle('hidden', v.dataset.view !== t.dataset.tab));
+  if (t.dataset.tab === 'users') loadUsers();
+}));
+
+// ---------------- éditeur de contenu ----------------
+const SCHEMA = [
+  { key: 'hero', title: 'Accueil (haut de page)', color: 'var(--terra)', fields: [['badge', 'Petit bandeau au-dessus du titre'], ['title', 'Grand titre'], ['text', 'Texte de présentation', 'area']] },
+  { key: 'about', title: "L'asso — Qui sommes-nous ?", color: 'var(--teal)', fields: [['title', 'Titre'], ['text', 'Texte', 'area', 'Saute une ligne pour faire un nouveau paragraphe.']],
+    lists: [{ key: 'pillars', label: 'Points clés', add: 'Ajouter un point', fields: [['title', 'Titre'], ['text', 'Texte', 'area']], blank: { title: '', text: '' } }] },
+  { key: 'actions', title: 'Nos actions', color: '#F49B2F', fields: [['title', 'Titre de la section'], ['subtitle', 'Sous-titre']],
+    lists: [{ key: 'items', label: 'Actions', add: 'Ajouter une action', fields: [['title', 'Titre'], ['text', 'Description', 'area']], blank: { title: '', text: '' } }] },
+  { key: 'agenda', title: 'Agenda', color: '#1F9BD7', fields: [['title', 'Titre de la section'], ['subtitle', 'Sous-titre']],
+    lists: [{ key: 'events', label: 'Événements', add: 'Ajouter un événement', fields: [['day', 'Jour (ex. 12)', 'half'], ['month', 'Mois (ex. Déc.)', 'half'], ['title', "Titre de l'événement"], ['tag', 'Étiquette (ex. Pro, Convivialité)'], ['text', 'Description', 'area']], blank: { day: '', month: '', title: '', tag: '', text: '' } }] },
+  { key: 'bureau', title: 'Le bureau', color: '#7B6CC4', fields: [['title', 'Titre de la section']],
+    lists: [{ key: 'members', label: 'Membres', add: 'Ajouter un membre', fields: [['name', 'Prénom Nom', 'half'], ['role', 'Rôle', 'half']], blank: { name: '', role: '' } }] },
+  { key: 'adhesion', title: 'Adhésion', color: '#E8414F', fields: [['title', 'Titre'], ['text', 'Texte', 'area'], ['price', 'Montant (ex. 10)', 'half'], ['priceUnit', 'Unité (ex. € / an)', 'half'], ['priceLabel', 'Texte sous le prix', 'half'], ['buttonText', 'Texte du bouton', 'half'], ['link', 'Lien du bouton (HelloAsso…)', 'url']],
+    lists: [{ key: 'benefits', label: 'Avantages', add: 'Ajouter un avantage', strings: true, blank: '' }] },
+  { key: 'contact', title: 'Contact', color: '#F2B705', fields: [['title', 'Titre de la section'], ['email', 'Adresse e-mail', 'half'], ['instagram', 'Pseudo Instagram (ex. @lacabanepsy)', 'half'], ['instagramUrl', 'Lien Instagram', 'url'], ['location', 'Où nous trouver', 'area']] },
+];
+
+let content = null, saved = null, dirty = false;
+const openPanels = new Set(['hero']);
+
+async function loadContent() {
+  let c = null, meta = null;
+  try { const r = await api('content'); c = r.content; meta = r.updatedAt; } catch {}
+  if (!c) c = await (await fetch('/content.json', { cache: 'no-store' })).json();
+  content = c; saved = JSON.stringify(c); setDirty(false); renderEditor();
+  $('#last-update').textContent = meta ? `Dernière modification le ${fmtDateTime(meta.at)} par ${meta.by}` : 'Pas encore modifié depuis la mise en ligne.';
+}
+
+function field(path, [k, label, type, hint], value) {
+  const id = 'f-' + path.replace(/\./g, '-');
+  const input = type === 'area'
+    ? `<textarea id="${id}" data-path="${path}">${esc(value)}</textarea>`
+    : `<input type="${type === 'url' ? 'url' : 'text'}" id="${id}" data-path="${path}" value="${esc(value)}"${type === 'url' ? ' placeholder="https://…"' : ''}>`;
+  return `<div class="${type === 'half' ? '' : 'span2'}"><label for="${id}">${esc(label)}${hint ? ` <span class="hint">${esc(hint)}</span>` : ''}</label>${input}</div>`;
+}
+function fieldsBlock(base, fields, obj) {
+  return `<div class="grid2">${fields.map(f => field(`${base}.${f[0]}`, f, obj?.[f[0]])).join('')}</div>`;
+}
+function renderEditor() {
+  $('#editor').innerHTML = SCHEMA.map(sec => {
+    const data = content[sec.key] ||= {};
+    const lists = (sec.lists || []).map(l => {
+      const arr = data[l.key] ||= [];
+      const tools = (i) => `<div class="tools">
+        <button type="button" class="icon-btn" title="Monter" data-act="up" data-list="${sec.key}.${l.key}" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button type="button" class="icon-btn" title="Descendre" data-act="down" data-list="${sec.key}.${l.key}" data-i="${i}" ${i === arr.length - 1 ? 'disabled' : ''}>↓</button>
+        <button type="button" class="icon-btn danger" title="Supprimer" data-act="del" data-list="${sec.key}.${l.key}" data-i="${i}">✕</button></div>`;
+      const items = arr.map((it, i) => l.strings
+        ? `<div class="item str"><input type="text" data-path="${sec.key}.${l.key}.${i}" value="${esc(it)}">${tools(i)}</div>`
+        : `<div class="item">${fieldsBlock(`${sec.key}.${l.key}.${i}`, l.fields, it)}${tools(i)}</div>`).join('');
+      return `<div class="list"><h4>${esc(l.label)} (${arr.length})</h4>${items}
+        <button type="button" class="btn ghost small" data-act="add" data-list="${sec.key}.${l.key}">＋ ${esc(l.add)}</button></div>`;
+    }).join('');
+    return `<details class="panel" data-sec="${sec.key}" ${openPanels.has(sec.key) ? 'open' : ''} style="--c:${sec.color}">
+      <summary><span class="dot"></span>${esc(sec.title)}<span class="chev">›</span></summary>
+      <div class="body">${fieldsBlock(sec.key, sec.fields, data)}${lists}</div></details>`;
+  }).join('');
+  document.querySelectorAll('.grid2 > .span2').forEach(el => el.style.gridColumn = '1 / -1');
+}
+const getPath = p => p.split('.').reduce((o, k) => o[k], content);
+function setPath(p, v) { const ks = p.split('.'); const last = ks.pop(); ks.reduce((o, k) => o[k], content)[last] = v; }
+
+$('#editor').addEventListener('input', e => { const p = e.target.dataset.path; if (!p) return; setPath(p, e.target.value); setDirty(JSON.stringify(content) !== saved); });
+$('#editor').addEventListener('toggle', e => { const s = e.target.dataset?.sec; if (s) e.target.open ? openPanels.add(s) : openPanels.delete(s); }, true);
+$('#editor').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const arr = getPath(b.dataset.list), i = +b.dataset.i, [sk, lk] = b.dataset.list.split('.');
+  const def = SCHEMA.find(s => s.key === sk).lists.find(l => l.key === lk);
+  if (b.dataset.act === 'add') arr.push(structuredClone(def.blank));
+  if (b.dataset.act === 'del') { if (!confirm('Supprimer cet élément ?')) return; arr.splice(i, 1); }
+  if (b.dataset.act === 'up' && i > 0) [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+  if (b.dataset.act === 'down' && i < arr.length - 1) [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
+  const y = window.scrollY; renderEditor(); window.scrollTo(0, y);
+  setDirty(JSON.stringify(content) !== saved);
+  if (b.dataset.act === 'add') { const items = document.querySelectorAll(`[data-path^="${b.dataset.list}.${arr.length - 1}"]`); items[0]?.focus(); }
+});
+
+function setDirty(d) { dirty = d; $('#savebar').classList.toggle('show', d); $('#save-top').disabled = !d; }
+async function save() {
+  const btns = [$('#save'), $('#save-top')]; btns.forEach(b => b.disabled = true);
+  try { const r = await api('content', { method: 'PUT', body: { content } }); saved = JSON.stringify(content); setDirty(false);
+    $('#last-update').textContent = `Dernière modification le ${fmtDateTime(r.updatedAt.at)} par ${r.updatedAt.by}`; toast('✓ Site mis à jour'); }
+  catch (err) { toast('⚠️ ' + err.message); setDirty(true); }
+  $('#save').disabled = false;
+}
+$('#save').addEventListener('click', save); $('#save-top').addEventListener('click', save);
+$('#discard').addEventListener('click', () => { if (!confirm('Annuler toutes les modifications non enregistrées ?')) return; content = JSON.parse(saved); setDirty(false); renderEditor(); });
+window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+// ---------------- administrateurs ----------------
+async function loadUsers() {
+  try {
+    const { users } = await api('users');
+    $('#users').innerHTML = users.map(u => `<tr><td><b>${esc(u.username)}</b>${u.username === me.username ? ' <span class="badge">toi</span>' : ''}</td>
+      <td>${fmtDate(u.createdAt)}</td><td>${esc(u.createdBy || '—')}</td>
+      <td style="text-align:right">${u.username === me.username ? '' : `<button class="icon-btn danger" title="Supprimer" data-del="${esc(u.username)}">✕</button>`}</td></tr>`).join('');
+  } catch (err) { toast('⚠️ ' + err.message); }
+}
+$('#users').addEventListener('click', async e => {
+  const b = e.target.closest('[data-del]'); if (!b) return;
+  if (!confirm(`Supprimer l'administrateur « ${b.dataset.del} » ? Il ne pourra plus se connecter.`)) return;
+  try { await api('users/' + encodeURIComponent(b.dataset.del), { method: 'DELETE' }); toast('Administrateur supprimé'); loadUsers(); } catch (err) { toast('⚠️ ' + err.message); }
+});
+$('#gen').addEventListener('click', () => {
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const a = crypto.getRandomValues(new Uint32Array(12)); $('#u-pass').value = Array.from(a, n => chars[n % chars.length]).join('');
+});
+$('#add-user').addEventListener('submit', async e => {
+  e.preventDefault(); const b = e.submitter; b.disabled = true;
+  const username = $('#u-name').value.trim().toLowerCase(), password = $('#u-pass').value;
+  try { await api('users', { method: 'POST', body: { username, password } });
+    msg($('#u-msg'), `✓ Compte créé ! À transmettre — identifiant : ${username} · mot de passe : ${password}`, true);
+    $('#u-name').value = ''; $('#u-pass').value = ''; loadUsers(); }
+  catch (err) { msg($('#u-msg'), err.message); }
+  b.disabled = false;
+});
+
+// ---------------- mon compte ----------------
+$('#pw-form').addEventListener('submit', async e => {
+  e.preventDefault(); const b = e.submitter;
+  if ($('#p-new').value !== $('#p-new2').value) return msg($('#p-msg'), 'Les deux nouveaux mots de passe ne correspondent pas.');
+  b.disabled = true;
+  try { const r = await api('password', { method: 'PUT', body: { currentPassword: $('#p-cur').value, newPassword: $('#p-new').value } });
+    setToken(r.token); e.target.reset(); msg($('#p-msg'), '✓ Mot de passe mis à jour.', true); }
+  catch (err) { msg($('#p-msg'), err.message); }
+  b.disabled = false;
+});
+
+start();
+</script>
+</body>
+</html>
